@@ -6,8 +6,8 @@
 void isPositive(char *arr1, char *arr2, char ope);
 void add(char *arr1, char *arr2, int positive);
 void sub(char *arr1, char *arr2, int positive);
+void mult(char *arr1, char *arr2, int positive);
 void show(int *ans, int len, int positive);
-char * mult(char *arr1, char *arr2);
 int positive1, positive2;
 
 void main(){
@@ -67,7 +67,7 @@ void main(){
 			}
 			break;
 		case '*':
-//			ans = mult(arr1, arr2, positive1 * positive2);
+			mult(arr1, arr2, positive1 * positive2);
 			break;
 	}
 
@@ -138,15 +138,15 @@ void sub(char *arr1, char *arr2, int positive)
 	else{
 		len = len2;
 	}
+//	for(i = 0; i < len; i++){
+//		printf("_%d", ans[i]);
+//	}
 	for(i = 0; i < len; i++){
-		printf("_%d", ans[i]);
-	}
-	for(i = 0; i < len; i++){
-		int j;
-			printf("\n--------------------\n");
-		for(j = 0; j < len; j++){
-			printf("_%d", ans[j]);
-		}
+//		int j;
+//			printf("\n--------------------\n");
+//		for(j = 0; j < len; j++){
+//			printf("_%d", ans[j]);
+//		}
 		if(ans[i]<0 && ans[i+1]){
 			ans[i+1] -= 1;
 			ans[i] = 10 + ans[i];
@@ -174,16 +174,36 @@ void isPositive(char *arr1, char *arr2, char ope)
 	    }
 	}
 }
-char * mult(char *arr1, char *arr2)
+void mult(char *arr1, char *arr2, int positive)
 {
+	int *ans = calloc( MAX,  sizeof(int));
 	int len, len1 = strlen(arr1), len2 = strlen(arr2), i=0, j = len1 - 1, k = len2 - 1;
+	//todo
+//	while(j >= 0 && k >= 0){
+//		ans[i++]=(arr1[j--] - '0') * (arr2[k--] - '0');
+//	}
+//	while(j >= 0){
+//		ans[i++] = arr1[j--] - '0';
+//	}
+//	while(k >= 0){
+//		ans[i++] = arr2[k--] - '0';
+//	}
+	
 	if(len1 > len2){
 		len = len1*2;
 	}
 	else{
 		len = len2*2;
 	}
-    return arr1;
+	
+	for(i = 0; i < len; i++){
+		if(ans[i]>=10) {
+			ans[i+1]+=ans[i]/10;
+			ans[i]=ans[i]%10;
+		}
+	}
+	show(ans, len, positive);
+	free(ans);
 }
 
 
