@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAX 1000
 void add(char *arr1, char *arr2);
 char * sub(char *arr1, char *arr2);
 char * mult(char *arr1, char *arr2);
@@ -66,49 +67,39 @@ void main(){
 
 void add(char *arr1, char *arr2)
 {
-	int *ans = malloc(sizeof(int));
+	int *ans = malloc( MAX *sizeof(int));
 	int i=0, j = strlen(arr1) - 1, k = strlen(arr2) - 1;
 	while(j >= 0 && k >= 0){
-		printf("\narr1: \n", (arr1[j] - '0') + (arr1[j] - '0'));
-		ans[i++]=arr1[j--] + arr2[k--];
+		ans[i++]=(arr1[j--] - '0') + (arr2[k--] - '0');
 	}
-	if(j >= 0){
-		while(k >= 0){
-			ans[i++] = arr1[j--] - '0';
-		}
+	while(j >= 0){
+		ans[i++] = arr1[j--] - '0';
 	}
-	else if(k >= 0){
-		while(k >= 0){
-			ans[i++] = arr2[k--] - '0';
-		}
+	while(k >= 0){
+		ans[i++] = arr2[k--] - '0';
 	}
-	printf("\narr1: \n");
-	for (i = strlen(arr1)-1; i >= 0; i--)
-    {
-        printf("%c ", *(arr1 + i));
-    }
-	printf("\nans: \n");
-	for (i = strlen(arr1)-1; i >= 0; i--)
-    {
-        printf("%d ", *(ans + i));
-    }
-	printf("\nans: %d\n", ans);
-	for (i = 0; i < strlen(arr1); i++)
-    {
-        printf(" %d", ans[i]);
-    }
-	for(i = 0; i < strlen(arr1); i++){
+	int len;
+	if(strlen(arr1) > strlen(arr2)){
+		len = strlen(arr1);
+	}
+	else{
+		len = strlen(arr2);
+	}
+	for(i = 0; i < len; i++){
 		if(ans[i]>=10) {
 			ans[i+1]+=ans[i]/10;
 			ans[i]=ans[i]%10;
 		}
 	}
-	printf("\nans:");
-	for (i = 0; i < strlen(arr1); i++)
-    {
-        printf("%c", *(ans + i));
-    }
-	printf("add:%s\n", ans);
+	for(i = len; i >= 0; i--){
+		int a = ans[i];
+		if(i==len && a==0){
+			continue;
+		}
+		else{
+	    	printf("%d ", a);
+		}
+	}
 }
 char * sub(char *arr1, char *arr2)
 {
