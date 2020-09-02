@@ -3,15 +3,16 @@
 #include <string.h>
 #define MAX 1000
 void isPositive(char *arr1, char *arr2, char ope);
-void add(char *arr1, char *arr2, int positive);
-void sub(char *arr1, char *arr2, int positive);
-void mult(char *arr1, char *arr2, int positive);
+int isBigger(char *arr1, char *arr2);
+int add(char *arr1, char *arr2, int *ans);
+int sub(char *arr1, char *arr2, int *ans);
+int mult(char *arr1, char *arr2, int *ans);
 void show(int *ans, int len, int positive);
 int positive1, positive2;
 
 void main(){
-	char *arr1 = malloc(sizeof(char)), *arr2 = malloc(sizeof(char)), *ans = malloc(sizeof(char));
-	
+	char *arr1 = malloc(sizeof(char)), *arr2 = malloc(sizeof(char));
+	int *ans = calloc(MAX, sizeof(int));
 	printf("Input1:");
     scanf("%s", arr1);
 	printf("Input2:");
@@ -20,61 +21,89 @@ void main(){
 	printf("請輸入運算子:");
     char ope = getchar();
 	
-	isPositive(arr1, arr2, ope);
-	
-	int len1 = strlen(arr1), len2 = strlen(arr2), bigger = 1;
-	if(len1 < len2){
-		bigger = 2;  //arr順序交換 
-	}
-	else if(len1 == len2){
-		int i;
-		for(i = 0; i < len1; i++){
-			if(arr1[i] < arr2[i]){
-				bigger = 2;  //arr順序交換 
-				break;
-			}			
-		}
-	}
-	
+	isPositive(arr1, arr2, ope);  //判斷正負，去掉正負符號 
+	int bigger = isBigger(arr1, arr2);  //判斷兩數絕對值大小 
+	int len, positive = positive1;
 	switch(ope){
 		case '+':
 			if(positive1*positive2 == 1){//+++ -+-
-				add(arr1, arr2, positive1);
+				len = add(arr1, arr2, ans);
+				break;
 			}
-			else{
-				if(bigger == 1){
-					sub(arr1, arr2, positive1);
-				}
-				else if(bigger == 2){
-					sub(arr2, arr1, positive2);
-				}
+			if(bigger == 1){
+				len = sub(arr1, arr2, ans);
+				break;
 			}
+			len = sub(arr2, arr1, ans);
+			positive = positive2;//bigger == 2
+//			printf("\npositive:%d_positive1:%d\n", positive, positive1);
 			break;
 		case '-':
 			if(positive1*positive2 == 1){//+-+ ---
 				if(bigger == 1){
-					sub(arr1, arr2, positive1);
+					len = sub(arr1, arr2, ans);
+					break;
 				}
-				else if(bigger == 2){
-					sub(arr2, arr1, 0 - positive1);
-				}
+				len = sub(arr2, arr1, ans);
+				positive =  positive1 * (-1);//bigger == 2
+				break;
 			}
-			else{//+-- --+
-				add(arr1, arr2, positive1);
-			}
+			len = add(arr1, arr2, ans);
 			break;
 		case '*':
-			mult(arr1, arr2, positive1 * positive2);
+			len = mult(arr1, arr2, ans);
+			positive =  positive1 * positive2;//bigger == 2
 			break;
-	}    
+	}
+//	printf("\nlen:%d, positive:%d, positive1:%d, positive2:%d, bigger:%d\n", len, positive, positive1, positive2, bigger);
+//	printf("a:\n");
+//	int i ;
+//    for(i = MAX-1; i >= 0; i--){
+//		printf("%d", ans[i]);
+//	}
+	show(ans, len, positive);
 	free(arr1);
 	free(arr2);
+	free(ans);
 }
 
-void add(char *arr1, char *arr2, int positive)
+void isPositive(char *arr1, char *arr2, char ope)
 {
-	int *ans = calloc( MAX,  sizeof(int));
-	int len, len1 = strlen(arr1), len2 = strlen(arr2), i=0, j = len1 - 1, k = len2 - 1;
+	int i, len1 = strlen(arr1), len2 = strlen(arr2);
+	positive1 = 1, positive2 = 1;
+	if(arr1[0] == '-'){
+		positive1 = -1;
+		for (i = 0; i < len1; i++)
+	    {
+	        *(arr1 + i) = *(arr1 + i + 1);
+	    }
+	}
+	if(arr2[0] == '-'){
+		positive2 = -1;
+		for (i = 0; i < len2; i++)
+	    {
+	        *(arr2 + i) = *(arr2 + i + 1);
+	    }
+	}
+}
+int isBigger(char *arr1, char *arr2)
+{
+	int i, len1 = strlen(arr1), len2 = strlen(arr2);
+	if(len1 < len2){
+		return 2;  //arr順序交換 
+	}
+	if(len1 == len2){
+		for(i = 0; i < len1; i++){
+			if(arr1[i] < arr2[i]){
+				return 2;
+			}			
+		}
+	}
+	return 1;
+}
+int add(char *arr1, char *arr2, int *ans)
+{
+	int len, len1 = strlen(arr1), len2 = strlen(arr2), i = 0, j = len1 - 1, k = len2 - 1;
 	while(j >= 0 && k >= 0){
 		ans[i++]=(arr1[j--] - '0') + (arr2[k--] - '0');
 	}
@@ -97,13 +126,11 @@ void add(char *arr1, char *arr2, int positive)
 			ans[i]=ans[i]%10;
 		}
 	}
-	show(ans, len, positive);
-	free(ans);
+	return len;
 }
-void sub(char *arr1, char *arr2, int positive)
+int sub(char *arr1, char *arr2, int *ans)
 {
-	int *ans = calloc( MAX,  sizeof(int));
-	int len, len1 = strlen(arr1), len2 = strlen(arr2), i=0, j = len1 - 1, k = len2 - 1;
+	int  len1 = strlen(arr1), len2 = strlen(arr2), i = 0, j = len1 - 1, k = len2 - 1;
 	while(j >= 0 && k >= 0){
 		ans[i++]=(arr1[j--] - '0') - (arr2[k--] - '0');
 	}
@@ -113,11 +140,8 @@ void sub(char *arr1, char *arr2, int positive)
 	while(k >= 0){
 		ans[i++] = arr2[k--] - '0';
 	}
-	
-	if(len1 > len2){
-		len = len1;
-	}
-	else{
+	int len = len1;
+	if(len1 < len2){
 		len = len2;
 	}
 	for(i = 0; i < len; i++){
@@ -126,55 +150,33 @@ void sub(char *arr1, char *arr2, int positive)
 			ans[i] = 10 + ans[i];
 		}
 	}
-	show(ans, len, positive);
-	free(ans);	
+	return len;
 }
-void isPositive(char *arr1, char *arr2, char ope)
-{
-	int i;
-	positive1 = 1, positive2 = 1;
-	if(arr1[0] == '-'){
-		positive1 = -1;
-		for (i = 0; i < strlen(arr1); i++)
-	    {
-	        *(arr1 + i) = *(arr1 + i + 1);
-	    }
-	}
-	if(arr2[0] == '-'){
-		positive2 = -1;
-		for (i = 0; i < strlen(arr2); i++)
-	    {
-	        *(arr2 + i) = *(arr2 + i + 1);
-	    }
-	}
-}
-void mult(char *arr1, char *arr2, int positive)
+int mult(char *arr1, char *arr2, int *ans)
 {
 	int len1 = strlen(arr1), len2 = strlen(arr2), len = len1 + len2 , i, j;
-	int *ans = calloc( MAX,  sizeof(int));
     for(i = 0; i < len1; i++) {
-        if(arr1[i]==0) continue;
+        if(arr1[i] == 0) continue;
         for(j = 0; j < len2; j++) {
 			ans[len-(i+j+2)] += (arr1[i] - '0') * (arr2[j] - '0');
         }
     }
 	for(i = 0; i < len; i++){
-		if(ans[i]>=10) {
-			ans[i+1]+=ans[i]/10;
-			ans[i]=ans[i]%10;
+		if(ans[i] >= 10) {
+			ans[i+1] += ans[i] / 10;
+			ans[i] = ans[i] % 10;
 		}
 	}
-	show(ans, len, positive);
-	free(ans);
+	return len;
 }
 void show(int *ans, int len, int positive){
-	int result = 0, i;
 	printf("\nresult:");
 	if(positive == -1){
 		printf("-");
 	}
-    for(i=len-1;i>0 && ans[i]==0; --i);
-    while(i>=0){
+	int i;
+    for(i = len-1; i > 0 && ans[i] == 0; --i);
+    while(i >= 0){
 		printf("%d", ans[i--]);
 	}
 }
