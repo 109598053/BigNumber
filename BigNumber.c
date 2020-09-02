@@ -36,7 +36,6 @@ void main(){
 			}
 			len = sub(arr2, arr1, ans);
 			positive = positive2;//bigger == 2
-//			printf("\npositive:%d_positive1:%d\n", positive, positive1);
 			break;
 		case '-':
 			if(positive1*positive2 == 1){//+-+ ---
@@ -55,12 +54,6 @@ void main(){
 			positive =  positive1 * positive2;//bigger == 2
 			break;
 	}
-//	printf("\nlen:%d, positive:%d, positive1:%d, positive2:%d, bigger:%d\n", len, positive, positive1, positive2, bigger);
-//	printf("a:\n");
-//	int i ;
-//    for(i = MAX-1; i >= 0; i--){
-//		printf("%d", ans[i]);
-//	}
 	show(ans, len, positive);
 	free(arr1);
 	free(arr2);
