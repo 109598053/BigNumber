@@ -153,7 +153,7 @@ void test(){
 }
 void testOper(char input1[], char input2[], char ope){
 	int i, len1 = strlen(input1), len2 = strlen(input2), *ans = calloc(MAX, sizeof(int));
-	char *arr1 = malloc(len1 * sizeof(char)), *arr2 = malloc(len2 * sizeof(char));
+	char *arr1 = malloc(MAX * sizeof(char)), *arr2 = malloc(MAX * sizeof(char));
 
 	for(i = 0; i < len1; i++){
 		arr1[i] = input1[i];
