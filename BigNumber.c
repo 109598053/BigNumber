@@ -11,7 +11,7 @@ void show(int *ans, int len, int positive);
 int positive1, positive2;
 
 void main(){
-	char *arr1 = malloc(sizeof(char)), *arr2 = malloc(sizeof(char));
+	char *arr1 = malloc(MAX * sizeof(char)), *arr2 = malloc(MAX * sizeof(char));
 	int *ans = calloc(MAX, sizeof(int));
 	printf("Input1:");
     scanf("%s", arr1);
