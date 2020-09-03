@@ -8,63 +8,12 @@ int add(char *arr1, char *arr2, int *ans);
 int sub(char *arr1, char *arr2, int *ans);
 int mult(char *arr1, char *arr2, int *ans);
 void show(int *ans, int len, int positive);
+void test();
+void testOper(char input1[], char input2[], char ope);
 int positive1, positive2;
 
 void main(){
-	char *arr1 = malloc(sizeof(char)), *arr2 = malloc(sizeof(char));
-	int *ans = calloc(MAX, sizeof(int));
-	printf("Input1:");
-    scanf("%s", arr1);
-	printf("Input2:");
-    scanf("%s", arr2);
-    fflush(stdin);
-	printf("請輸入運算子:");
-    char ope = getchar();
-	
-	isPositive(arr1, arr2, ope);  //判斷正負，去掉正負符號 
-	int bigger = isBigger(arr1, arr2);  //判斷兩數絕對值大小 
-	int len, positive = positive1;
-	switch(ope){
-		case '+':
-			if(positive1*positive2 == 1){//+++ -+-
-				len = add(arr1, arr2, ans);
-				break;
-			}
-			if(bigger == 1){
-				len = sub(arr1, arr2, ans);
-				break;
-			}
-			len = sub(arr2, arr1, ans);
-			positive = positive2;//bigger == 2
-//			printf("\npositive:%d_positive1:%d\n", positive, positive1);
-			break;
-		case '-':
-			if(positive1*positive2 == 1){//+-+ ---
-				if(bigger == 1){
-					len = sub(arr1, arr2, ans);
-					break;
-				}
-				len = sub(arr2, arr1, ans);
-				positive =  positive1 * (-1);//bigger == 2
-				break;
-			}
-			len = add(arr1, arr2, ans);
-			break;
-		case '*':
-			len = mult(arr1, arr2, ans);
-			positive =  positive1 * positive2;//bigger == 2
-			break;
-	}
-//	printf("\nlen:%d, positive:%d, positive1:%d, positive2:%d, bigger:%d\n", len, positive, positive1, positive2, bigger);
-//	printf("a:\n");
-//	int i ;
-//    for(i = MAX-1; i >= 0; i--){
-//		printf("%d", ans[i]);
-//	}
-	show(ans, len, positive);
-	free(arr1);
-	free(arr2);
-	free(ans);
+	test();	
 }
 
 void isPositive(char *arr1, char *arr2, char ope)
@@ -170,7 +119,6 @@ int mult(char *arr1, char *arr2, int *ans)
 	return len;
 }
 void show(int *ans, int len, int positive){
-	printf("\nresult:");
 	if(positive == -1){
 		printf("-");
 	}
@@ -179,4 +127,79 @@ void show(int *ans, int len, int positive){
     while(i >= 0){
 		printf("%d", ans[i--]);
 	}
+	printf("\n");
+}
+void test(){
+	testOper("-2", "9999999999999999999999999999", '*');	printf("-19999999999999999999999999998\n\n");
+	testOper("9999999999999999999999999999", "-2", '*');	printf("-19999999999999999999999999998\n\n");
+	testOper("9999999", "987", '+');	printf("10000986\n\n");
+	testOper("-9999999", "-987", '+');	printf("-10000986\n\n");
+	testOper("1111333", "333", '+');	printf("1111666\n\n");
+	testOper("333", "-1111333", '+');	printf("-1111000\n\n");
+	testOper("-333", "1111333", '+');	printf("1111000\n\n");
+	testOper("333", "-1111333", '+');	printf("-1111000\n\n");
+	testOper("-9999999", "987", '+');	printf("-10000986\n\n");
+	testOper("9999999", "-987", '-');	printf("10000986\n\n");
+	testOper("9999999", "987", '-');	printf("9999012\n\n");
+	testOper("-9999999", "-987", '-');	printf("-9999012\n\n");
+	testOper("333", "1111333", '-');	printf("-1111000\n\n");
+	testOper("0", "0", '*');		printf("0\n\n");
+	testOper("123", "123", '*');	printf("15129\n\n");
+	testOper("-123", "123", '*');	printf("-15129\n\n");
+	testOper("123", "-123", '*');	printf("-15129\n\n");
+	testOper("-123", "-123", '*');	printf("15129\n\n");
+	testOper("1231", "123", '*');	printf("151413\n\n");
+	testOper("-123", "1231", '*');	printf("-151413\n\n");
+}
+void testOper(char input1[], char input2[], char ope){
+	int i, len1 = strlen(input1), len2 = strlen(input2), *ans = calloc(MAX, sizeof(int));
+	char *arr1 = malloc(len1 * sizeof(char)), *arr2 = malloc(len2 * sizeof(char));
+
+	for(i = 0; i < len1; i++){
+		arr1[i] = input1[i];
+	}
+	arr1[i] = '\0';
+	for(i = 0; i < len2; i++){
+		arr2[i] = input2[i];
+	}
+	arr2[i] = '\0';
+
+	isPositive(arr1, arr2, ope);  //判斷正負，去掉正負符號 
+	
+	int bigger = isBigger(arr1, arr2);  //判斷兩數絕對值大小 
+	int len, positive = positive1;
+	switch(ope){
+		case '+':
+			if(positive1*positive2 == 1){//+++ -+-
+				len = add(arr1, arr2, ans);
+				break;
+			}
+			if(bigger == 1){
+				len = sub(arr1, arr2, ans);
+				break;
+			}
+			len = sub(arr2, arr1, ans);
+			positive = positive2;//bigger == 2
+			break;
+		case '-':
+			if(positive1*positive2 == 1){//+-+ ---
+				if(bigger == 1){
+					len = sub(arr1, arr2, ans);
+					break;
+				}
+				len = sub(arr2, arr1, ans);
+				positive =  positive1 * (-1);//bigger == 2
+				break;
+			}
+			len = add(arr1, arr2, ans);
+			break;
+		case '*':
+			len = mult(arr1, arr2, ans);
+			positive =  positive1 * positive2;//bigger == 2
+			break;
+	}
+	show(ans, len, positive);
+	free(arr1);
+	free(arr2);
+	free(ans);
 }
